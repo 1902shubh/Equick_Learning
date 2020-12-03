@@ -107,15 +107,18 @@ public class MainActivity extends AppCompatActivity {
             public boolean shouldOverrideUrlLoading(WebView view, String webUrl) {
                 if (webUrl == null || webUrl.startsWith("http://") || webUrl.startsWith("https://"))
                     return false;
-
-                try {
-                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(webUrl));
-                    view.getContext().startActivity(intent);
-                    return true;
-                } catch (Exception e) {
-                    String TAG = "Error";
-                    Log.i(TAG, "shouldOverrideUrlLoading Exception:" + e);
-                    return true;
+                else {
+                    try {
+                        String[] ur = webUrl.split("=");
+                        String[] u = ur[1].split("&");
+                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id="+u[0]));
+                        startActivity(intent);
+                        return true;
+                    } catch (Exception e) {
+                        String TAG = "Error";
+                        Log.i(TAG, "shouldOverrideUrlLoading Exception:" + e);
+                        return true;
+                    }
                 }
             }
 
@@ -131,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
         WebSettings mywebsettings = web.getSettings();
         mywebsettings.setJavaScriptEnabled(true);
-        web.loadUrl(webUrl);
 
+        web.loadUrl(webUrl);
         //improve webview performance
         web.getSettings().setLoadsImagesAutomatically(true);
         web.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
@@ -144,6 +147,7 @@ public class MainActivity extends AppCompatActivity {
         mywebsettings.setSavePassword(true);
         mywebsettings.setSaveFormData(true);
         mywebsettings.setEnableSmoothTransition(true);
+
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         web.setWebChromeClient(new WebChromeClient() {
